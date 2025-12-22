@@ -116,7 +116,16 @@ fi
 # NixOS Installation
 # =========================
 print_step "Installing NixOS..."
-nixos-install --no-root-password --flake /mnt/etc/nixos#bau-pc
+
+INSTALL_FLAGS="--no-root-password"
+
+# If flake.lock doesn't exist, add the flag to skip writing it
+if [ ! -f "/mnt/etc/nixos/flake.lock" ]; then
+    print_step "Lockfile not found. Adding --no-write-lock-file to bypass assertion error."
+    INSTALL_FLAGS="$INSTALL_FLAGS --no-write-lock-file"
+fi
+
+nixos-install $INSTALL_FLAGS --flake /mnt/etc/nixos#bau-pc
 
 # =========================
 # Move config to user directory
