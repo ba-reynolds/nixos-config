@@ -1,7 +1,4 @@
 { config, pkgs, ... }:
-let
-  dotfiles = "${config.home.homeDirectory}/nixos-config/config";
-in
 {
   home.username = "bau";
   home.stateVersion = "25.11";
@@ -22,6 +19,6 @@ in
   };
 
   xdg.configFile = {
-    waybar.source = "${dotfiles}/waybar";
+    waybar.source = ./config/waybar;
   };
 }
