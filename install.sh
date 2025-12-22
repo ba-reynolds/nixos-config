@@ -135,8 +135,6 @@ mkdir -p "/mnt$CONFIG_DEST"
 mv /mnt/etc/nixos/* "/mnt$CONFIG_DEST/"
 rmdir /mnt/etc/nixos
 
-print_step "Setting ownership of config files..."
-chroot /mnt chown -R $USER_NAME:$USER_NAME "$CONFIG_DEST"
 
 # =========================
 # Password setup
