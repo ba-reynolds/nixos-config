@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -e
 
+# Redirect all output to a log file
+exec > >(tee -a /root/nixos-install.log)
+exec 2>&1
+
+
 # =========================
 # Variables
 # =========================
@@ -96,18 +101,6 @@ if [ -d "./config" ]; then
     print_step "Copying config directory..."
     cp -rv ./config /mnt/etc/nixos/
 fi
-
-
-print_step "Syncing files to disk..."
-sync
-sleep 2  # Give the filesystem a moment to settle
-
-# Verify files are actually there
-print_step "Verifying copied files..."
-ls -la /mnt/etc/nixos/
-[ -f "/mnt/etc/nixos/flake.nix" ] || print_error "flake.nix not found after copy!"
-[ -f "/mnt/etc/nixos/configuration.nix" ] || print_error "configuration.nix not found after copy!"
-[ -f "/mnt/etc/nixos/home.nix" ] || print_error "home.nix not found after copy!"
 
 
 # =========================
