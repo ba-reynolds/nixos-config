@@ -97,6 +97,19 @@ if [ -d "./config" ]; then
     cp -rv ./config /mnt/etc/nixos/
 fi
 
+
+print_step "Syncing files to disk..."
+sync
+sleep 2  # Give the filesystem a moment to settle
+
+# Verify files are actually there
+print_step "Verifying copied files..."
+ls -la /mnt/etc/nixos/
+[ -f "/mnt/etc/nixos/flake.nix" ] || print_error "flake.nix not found after copy!"
+[ -f "/mnt/etc/nixos/configuration.nix" ] || print_error "configuration.nix not found after copy!"
+[ -f "/mnt/etc/nixos/home.nix" ] || print_error "home.nix not found after copy!"
+
+
 # =========================
 # NixOS Installation
 # =========================
