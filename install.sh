@@ -1,11 +1,26 @@
 #!/usr/bin/env bash
 set -e
 
-# Colors
+# =========================
+# Variables
+# =========================
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m'
 
+USER_NAME="bau"
+USER_HOME="/home/$USER_NAME"
+
+DEVICE="${1:-}"
+
+ROOT_PART=""
+SWAP_PART=""
+BOOT_PART=""
+CONFIG_DEST="$USER_HOME/nixos-config"
+
+# =========================
+# Functions
+# =========================
 print_step() {
     echo -e "${GREEN}==> $1${NC}"
 }
@@ -15,19 +30,19 @@ print_error() {
     exit 1
 }
 
-# Check root
+# =========================
+# Checks
+# =========================
 [ "$EUID" -ne 0 ] && print_error "Run as root"
-
-# Args
-DEVICE="${1:-}"
 
 [ -z "$DEVICE" ] && print_error "Usage: $0 <device>
 Example: $0 /dev/sda"
 
-# Verify device
 [ ! -b "$DEVICE" ] && print_error "Device $DEVICE not found"
 
-# Partition disk (following official NixOS manual)
+# =========================
+# Partitioning
+# =========================
 print_step "Partitioning $DEVICE..."
 parted "$DEVICE" --script -- mklabel gpt
 parted "$DEVICE" --script -- mkpart root ext4 512MB -8GB
@@ -37,38 +52,62 @@ parted "$DEVICE" --script -- set 3 esp on
 
 # Determine partition names
 if [[ "$DEVICE" == *"nvme"* ]] || [[ "$DEVICE" == *"mmcblk"* ]]; then
-    ROOT="${DEVICE}p1"
-    SWAP="${DEVICE}p2"
-    BOOT="${DEVICE}p3"
+    ROOT_PART="${DEVICE}p1"
+    SWAP_PART="${DEVICE}p2"
+    BOOT_PART="${DEVICE}p3"
 else
-    ROOT="${DEVICE}1"
-    SWAP="${DEVICE}2"
-    BOOT="${DEVICE}3"
+    ROOT_PART="${DEVICE}1"
+    SWAP_PART="${DEVICE}2"
+    BOOT_PART="${DEVICE}3"
 fi
 
-# Format
+# =========================
+# Formatting
+# =========================
 print_step "Formatting partitions..."
-mkfs.ext4 -F -L nixos "$ROOT"
-mkswap -L swap "$SWAP"
-mkfs.fat -F 32 -n boot "$BOOT"
+mkfs.ext4 -F -L nixos "$ROOT_PART"
+mkswap -L swap "$SWAP_PART"
+mkfs.fat -F 32 -n boot "$BOOT_PART"
 
-# Mount
+# =========================
+# Mounting
+# =========================
 print_step "Mounting..."
-mount "$ROOT" /mnt
+mount "$ROOT_PART" /mnt
 mkdir -p /mnt/boot
-mount -o umask=077 "$BOOT" /mnt/boot
-swapon "$SWAP"
+mount -o umask=077 "$BOOT_PART" /mnt/boot
+swapon "$SWAP_PART"
 
-# Generate config
+# =========================
+# Config generation
+# =========================
 print_step "Generating config..."
 nixos-generate-config --root /mnt
 
-# Copy local config files
 print_step "Copying local config files..."
 cp -v config/*.nix /mnt/etc/nixos/ 2>/dev/null || print_error "No .nix files found"
 
-# Install
+# Move config to user's home
+print_step "Moving config to home directory..."
+mkdir -p "$CONFIG_DEST"
+mv /mnt/etc/nixos "$CONFIG_DEST/"
+
+# Set ownership to the user
+chown -R $USER_NAME:$USER_NAME "$CONFIG_DEST"
+
+# =========================
+# NixOS Installation
+# =========================
 print_step "Installing NixOS..."
-nixos-install --no-root-password
+nixos-install --no-root-password --flake "$CONFIG_DEST/nixos#bau-pc"
+
+# =========================
+# Password setup
+# =========================
+print_step "Setting root password..."
+passwd root
+
+print_step "Setting $USER_NAME password..."
+passwd $USER_NAME
 
 print_step "Done! Reboot and remove USB."
