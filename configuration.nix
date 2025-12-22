@@ -8,6 +8,7 @@
     ];
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  services.unmuteHeadphones.enable = true;
 
   networking.hostName = "bau-pc"; 
   networking.networkmanager.enable = true;

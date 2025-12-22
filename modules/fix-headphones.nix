@@ -13,8 +13,8 @@
         Type = "oneshot";
         ExecStart = ''
           ${pkgs.bash}/bin/bash -c \
-            "${pkgs.alsa-utils}/bin/amixer -c 1 set 'Auto-Mute Mode' Disabled && \
-             ${pkgs.alsa-utils}/bin/amixer -c 1 set Front unmute"
+            "${pkgs.alsa-utils}/bin/amixer -c 2 set 'Auto-Mute Mode' Disabled && \
+             ${pkgs.alsa-utils}/bin/amixer -c 2 set Front unmute"
         '';
       };
     };
