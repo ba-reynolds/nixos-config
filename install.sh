@@ -81,16 +81,22 @@ swapon "$SWAP_PART"
 # =========================
 # Config generation
 # =========================
-print_step "Generating config..."
-nixos-generate-config --root /mnt
+print_step "Generating hardware config..."
+mkdir -p "$CONFIG_DEST"
+nixos-generate-config --root /mnt --dir "$CONFIG_DEST"
 
 print_step "Copying local config files..."
-cp -v *.nix /mnt/etc/nixos/ 2>/dev/null || print_error "No .nix files found"
+# Copy all .nix files from current directory
+for nixfile in *.nix; do
+    [ -e "$nixfile" ] || continue
+    cp -v "$nixfile" "$CONFIG_DEST/"
+done
 
-# Prepare config destination in user's home
-print_step "Preparing config directory..."
-mkdir -p "$CONFIG_DEST"
-mv /mnt/etc/nixos "$CONFIG_DEST/"
+# Copy config directory if it exists
+if [ -d "./config" ]; then
+    print_step "Copying config directory..."
+    cp -rv ./config "$CONFIG_DEST/"
+fi
 
 # =========================
 # NixOS Installation
@@ -98,17 +104,17 @@ mv /mnt/etc/nixos "$CONFIG_DEST/"
 print_step "Installing NixOS..."
 nixos-install --no-root-password --flake "$CONFIG_DEST#bau-pc"
 
-# Set ownership after user exists
+# Set ownership after installation (user now exists)
 print_step "Setting ownership of config files..."
-chown -R $USER_NAME:$USER_NAME "$CONFIG_DEST"
+chroot /mnt chown -R $USER_NAME:$USER_NAME "$USER_HOME/nixos-config"
 
 # =========================
 # Password setup
 # =========================
 print_step "Setting root password..."
-passwd root
+nixos-enter --root /mnt -c "passwd root"
 
 print_step "Setting $USER_NAME password..."
-passwd $USER_NAME
+nixos-enter --root /mnt -c "passwd $USER_NAME"
 
 print_step "Done! Reboot and remove USB."
