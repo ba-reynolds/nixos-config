@@ -1,11 +1,6 @@
 #!/usr/bin/env bash
 set -e
 
-# Redirect all output to a log file
-exec > >(tee -a /root/nixos-install.log)
-exec 2>&1
-
-
 # =========================
 # Variables
 # =========================
@@ -16,7 +11,8 @@ NC='\033[0m'
 USER_NAME="bau"
 USER_HOME="/home/$USER_NAME"
 
-DEVICE="${1:-}"
+INSTALL_DEVICE="${1:-}"
+LOG_DEVICE="${2:-}"
 
 ROOT_PART=""
 SWAP_PART=""
@@ -40,30 +36,44 @@ print_error() {
 # =========================
 [ "$EUID" -ne 0 ] && print_error "Run as root"
 
-[ -z "$DEVICE" ] && print_error "Usage: $0 <device>
-Example: $0 /dev/sda"
+if [ -z "$INSTALL_DEVICE" ] || [ -z "$LOG_DEVICE" ]; then
+    print_error "Usage: $0 <install-device> <log-device>
+Example: $0 /dev/sda /dev/sdb"
+fi
 
-[ ! -b "$DEVICE" ] && print_error "Device $DEVICE not found"
+[ ! -b "$INSTALL_DEVICE" ] && print_error "Install device $INSTALL_DEVICE not found"
+[ ! -b "$LOG_DEVICE" ] && print_error "Log device $LOG_DEVICE not found"
+
+# Mount log device to temporary location
+LOG_MNT="/mnt-log"
+mkdir -p "$LOG_MNT"
+mount "$LOG_DEVICE" "$LOG_MNT" || print_error "Failed to mount log device $LOG_DEVICE"
+
+# Redirect all output to log file on the log device
+exec > >(tee -a "$LOG_MNT/nixos-install.log")
+exec 2>&1
+
+print_step "Logging to $LOG_MNT/nixos-install.log"
 
 # =========================
 # Partitioning
 # =========================
-print_step "Partitioning $DEVICE..."
-parted "$DEVICE" --script -- mklabel gpt
-parted "$DEVICE" --script -- mkpart root ext4 512MB -8GB
-parted "$DEVICE" --script -- mkpart swap linux-swap -8GB 100%
-parted "$DEVICE" --script -- mkpart ESP fat32 1MB 512MB
-parted "$DEVICE" --script -- set 3 esp on
+print_step "Partitioning $INSTALL_DEVICE..."
+parted "$INSTALL_DEVICE" --script -- mklabel gpt
+parted "$INSTALL_DEVICE" --script -- mkpart root ext4 512MB -8GB
+parted "$INSTALL_DEVICE" --script -- mkpart swap linux-swap -8GB 100%
+parted "$INSTALL_DEVICE" --script -- mkpart ESP fat32 1MB 512MB
+parted "$INSTALL_DEVICE" --script -- set 3 esp on
 
 # Determine partition names
-if [[ "$DEVICE" == *"nvme"* ]] || [[ "$DEVICE" == *"mmcblk"* ]]; then
-    ROOT_PART="${DEVICE}p1"
-    SWAP_PART="${DEVICE}p2"
-    BOOT_PART="${DEVICE}p3"
+if [[ "$INSTALL_DEVICE" == *"nvme"* ]] || [[ "$INSTALL_DEVICE" == *"mmcblk"* ]]; then
+    ROOT_PART="${INSTALL_DEVICE}p1"
+    SWAP_PART="${INSTALL_DEVICE}p2"
+    BOOT_PART="${INSTALL_DEVICE}p3"
 else
-    ROOT_PART="${DEVICE}1"
-    SWAP_PART="${DEVICE}2"
-    BOOT_PART="${DEVICE}3"
+    ROOT_PART="${INSTALL_DEVICE}1"
+    SWAP_PART="${INSTALL_DEVICE}2"
+    BOOT_PART="${INSTALL_DEVICE}3"
 fi
 
 # =========================
@@ -81,7 +91,7 @@ print_step "Mounting..."
 mount "$ROOT_PART" /mnt
 mkdir -p /mnt/boot
 mount -o umask=077 "$BOOT_PART" /mnt/boot
-swapon "$SWAP_PART"
+# swapon "$SWAP_PART" # uncomment this to enable swapping
 
 # =========================
 # Config generation
@@ -101,7 +111,6 @@ if [ -d "./config" ]; then
     print_step "Copying config directory..."
     cp -rv ./config /mnt/etc/nixos/
 fi
-
 
 # =========================
 # NixOS Installation
@@ -128,5 +137,11 @@ nixos-enter --root /mnt -c "passwd root"
 
 print_step "Setting $USER_NAME password..."
 nixos-enter --root /mnt -c "passwd $USER_NAME"
+
+# =========================
+# Cleanup log mount
+# =========================
+umount "$LOG_MNT"
+rmdir "$LOG_MNT"
 
 print_step "Done! Reboot and remove USB."
