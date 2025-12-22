@@ -85,7 +85,7 @@ print_step "Generating config..."
 nixos-generate-config --root /mnt
 
 print_step "Copying local config files..."
-cp -v config/*.nix /mnt/etc/nixos/ 2>/dev/null || print_error "No .nix files found"
+cp -v *.nix /mnt/etc/nixos/ 2>/dev/null || print_error "No .nix files found"
 
 # Move config to user's home
 print_step "Moving config to home directory..."

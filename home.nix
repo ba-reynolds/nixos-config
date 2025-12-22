@@ -1,13 +1,15 @@
 { config, pkgs, ... }:
+let
+  dotfiles = "${config.home.homeDirectory}/nixos-config/config";
+in
 {
   home.username = "bau";
-  home.homeDirectory = "/home/bau";
   home.stateVersion = "25.11";
   programs.git.enable = true;
   programs.bash = {
     enable = true;
     shellAliases = {
-      nrs = "nixos-rebuild switch --flake /etc/nixos#bau-pc";
+      nrs = "sudo nixos-rebuild switch --flake ~/nixos-config#bau-pc";
     };
     initExtra = ''
       export PS1='\[\e[38;5;76m\]\u\[\e[0m\] in \[\e[38;5;32m\]\w\[\e[0m\] \\$ '
@@ -17,5 +19,9 @@
           exec hyprland
       fi
     '';
+  };
+
+  xdg.configFile = {
+    waybar.source = "${dotfiles}/waybar";
   };
 }
