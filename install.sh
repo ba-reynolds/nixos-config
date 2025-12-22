@@ -112,6 +112,12 @@ if [ -d "./config" ]; then
     cp -rv ./config /mnt/etc/nixos/
 fi
 
+# Copy modules directory if it exists
+if [ -d "./modules" ]; then
+    print_step "Copying modules directory..."
+    cp -rv ./modules /mnt/etc/nixos/
+fi
+
 # =========================
 # NixOS Installation
 # =========================

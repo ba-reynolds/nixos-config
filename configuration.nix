@@ -4,6 +4,7 @@
   imports =
     [
       ./hardware-configuration.nix
+      ./modules/fix-headphones.nix
     ];
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -29,7 +30,6 @@
 
   programs.firefox.enable = true;
   programs.hyprland.enable = true;
-
 
   environment.systemPackages = with pkgs; [
     vim
