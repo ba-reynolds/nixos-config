@@ -96,7 +96,7 @@ mv /mnt/etc/nixos "$CONFIG_DEST/"
 # NixOS Installation
 # =========================
 print_step "Installing NixOS..."
-nixos-install --no-root-password --flake "$CONFIG_DEST/nixos#bau-pc"
+nixos-install --no-root-password --flake "$CONFIG_DEST#bau-pc"
 
 # Set ownership after user exists
 print_step "Setting ownership of config files..."
