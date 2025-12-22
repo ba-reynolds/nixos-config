@@ -10,6 +10,7 @@
 
   networking.hostName = "bau-pc"; 
   networking.networkmanager.enable = true;
+  services.getty.autologinUser = "bau";
 
   time.timeZone = "America/Argentina/Buenos_Aires";
   services.pipewire = {
