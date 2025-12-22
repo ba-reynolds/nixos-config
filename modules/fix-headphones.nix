@@ -4,13 +4,16 @@
     "Unmute rear headphones at boot using ALSA";
 
   config = lib.mkIf config.services.unmuteHeadphones.enable {
-    systemd.services.unmute-headphones = {
+    systemd.user.services.unmute-headphones = {
       description = "Unmute rear headphones";
-      wantedBy = [ "multi-user.target" ];
-      after = [ "sound.target" ];
+      wantedBy = [ "default.target" ];
+      after = [ "wireplumber.service" ];
+      requires = [ "wireplumber.service" ];
 
       serviceConfig = {
         Type = "oneshot";
+        RemainAfterExit = true;
+        ExecStartPre = "${pkgs.coreutils}/bin/sleep 5";
         ExecStart = ''
           ${pkgs.bash}/bin/bash -c \
             "${pkgs.alsa-utils}/bin/amixer -c 2 set 'Auto-Mute Mode' Disabled && \
