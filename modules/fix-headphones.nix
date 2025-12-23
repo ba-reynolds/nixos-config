@@ -13,7 +13,7 @@
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
-        ExecStartPre = "${pkgs.coreutils}/bin/sleep 5";
+        ExecStartPre = "${pkgs.coreutils}/bin/sleep 1";
         ExecStart = ''
           ${pkgs.bash}/bin/bash -c \
             "${pkgs.alsa-utils}/bin/amixer -c 2 set 'Auto-Mute Mode' Disabled && \
