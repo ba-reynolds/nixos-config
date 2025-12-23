@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 {
   home.username = "bau";
-  home.stateVersion = "25.11";
+  home.stateVersion = "25.05";
   programs.git.enable = true;
   programs.bash = {
     enable = true;
