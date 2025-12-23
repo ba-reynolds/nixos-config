@@ -4,11 +4,19 @@
   imports =
     [
       ./hardware-configuration.nix
-      ./modules/fix-headphones.nix
+      # ./modules/fix-headphones.nix
     ];
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  services.unmuteHeadphones.enable = true;
+  # services.unmuteHeadphones.enable = true;
+
+  # Enable ALSA state management
+  sound.enable = true;
+  
+  # This ensures ALSA mixer settings are saved/restored
+  hardware.alsa = {
+    enablePersistence = true;  # This is usually enabled by default
+  };
 
   networking.hostName = "bau-pc"; 
   networking.networkmanager.enable = true;
