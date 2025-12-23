@@ -42,6 +42,7 @@
     kitty
     hyprpaper
     btop
+    mpv
   ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
