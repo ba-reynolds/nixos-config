@@ -10,21 +10,15 @@
   boot.loader.efi.canTouchEfiVariables = true;
   # services.unmuteHeadphones.enable = true;
 
-  # Enable ALSA state management
-  sound.enable = true;
-  
-  # This ensures ALSA mixer settings are saved/restored
-  hardware.alsa = {
-    enablePersistence = true;  # This is usually enabled by default
-  };
-
   networking.hostName = "bau-pc"; 
   networking.networkmanager.enable = true;
   services.getty.autologinUser = "bau";
-
   time.timeZone = "America/Argentina/Buenos_Aires";
+
+  hardware.alsa.enablePersistence = true;
   services.pipewire = {
     enable = true;
+    alsa.enable = true;
     pulse.enable = true;
   };
 
