@@ -106,10 +106,10 @@ for nixfile in *.nix; do
     cp -v "$nixfile" /mnt/etc/nixos/
 done
 
-# Copy config directory if it exists
-if [ -d "./config" ]; then
-    print_step "Copying config directory..."
-    cp -rv ./config /mnt/etc/nixos/
+# Copy dotfiles directory if it exists
+if [ -d "./dotfiles" ]; then
+    print_step "Copying dotfiles directory..."
+    cp -rv ./dotfiles /mnt/etc/nixos/
 fi
 
 # Copy modules directory if it exists
