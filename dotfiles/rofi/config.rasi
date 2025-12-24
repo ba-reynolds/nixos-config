@@ -1,0 +1,25 @@
+configuration {
+    /* Behavioral Settings */
+    modi: "drun";
+    display-drun: "Search";
+    terminal: "kitty";
+    case-sensitive: false;
+    
+    /* Image Support */
+    show-icons: true;
+    
+    /* Matching your "no_actions" and "print_command" intent */
+    sidebar-mode: false;
+    cycle: true;
+}
+
+/* Layout and Dimensions */
+window {
+    width: 500px;
+    height: 400px;
+}
+
+listview {
+    columns: 1;
+    scrollbar: false;
+}
