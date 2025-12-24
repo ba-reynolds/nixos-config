@@ -47,7 +47,7 @@
 
   home.file = {
     ".vimrc".source = ./dotfiles/vim/.vimrc;
-  }
+  };
 
   xdg.configFile = {
     waybar.source = ./dotfiles/waybar;
