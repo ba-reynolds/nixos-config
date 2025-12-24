@@ -4,45 +4,63 @@
   imports =
     [
       ./hardware-configuration.nix
-      # ./modules/fix-headphones.nix
     ];
+  
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  # services.unmuteHeadphones.enable = true;
 
   networking.hostName = "bau-pc"; 
   networking.networkmanager.enable = true;
-  services.getty.autologinUser = "bau";
+  
   time.timeZone = "America/Argentina/Buenos_Aires";
+  i18n.defaultLocale = "en_US.UTF-8";
 
-  hardware.alsa.enablePersistence = true;
+  # Auto-login
+  services.greetd = {
+    enable = true;
+    settings = {
+      default_session = {
+        command = "${pkgs.hyprland}/bin/Hyprland";
+        user = "bau";
+      };
+    };
+  };
+  
+  # Audio with PipeWire
   services.pipewire = {
     enable = true;
     alsa.enable = true;
+    alsa.support32Bit = true;
     pulse.enable = true;
   };
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.bau = {
-    isNormalUser = true;
-    extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
-    packages = with pkgs; [
-      tree
-    ];
+  # XDG Portal for Hyprland
+  xdg.portal = {
+    enable = true;
+    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
   };
 
-  programs.firefox.enable = true;
+  # Define a user account. Don't forget to set a password with 'passwd'.
+  users.users.bau = {
+    isNormalUser = true;
+    extraGroups = [ "wheel" "networkmanager" ]; # Enable 'sudo' and NetworkManager for the user.
+  };
+
+  # Allow non-free packages
+  nixpkgs.config.allowUnfree = true;
   programs.hyprland.enable = true;
 
+  # Font
+  fonts.packages = with pkgs; [
+    nerd-fonts.sauce-code-pro
+  ];
+  
+  # Minimal system packages
   environment.systemPackages = with pkgs; [
     vim
     wget
-    bat
-    waybar
-    kitty
-    hyprpaper
-    btop
-    mpv
+    git
+    alsa-utils
   ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
