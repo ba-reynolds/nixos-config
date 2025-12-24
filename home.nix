@@ -45,11 +45,14 @@
     '';
   };
 
+  home.file = {
+    ".vimrc".source = ./dotfiles/vim/.vimrc;
+  }
+
   xdg.configFile = {
     waybar.source = ./dotfiles/waybar;
     kitty.source = ./dotfiles/kitty;
     rofi.source = ./dotfiles/rofi;
-
   };
 
   # Let Home Manager manage itself
