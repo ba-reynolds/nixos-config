@@ -1,0 +1,166 @@
+/* import generated thanks to pywal16 */
+@import url('~/.cache/bau/colors-waybar.css');
+
+/* Global Styles */
+* {
+    font-family: "CodeNewRoman Nerd Font Propo";
+    font-size: 15px;
+}
+
+window#waybar {
+    all: unset;
+}
+
+/* Module Group Layouts */
+.modules-left {
+    padding: 7px;
+    margin: 10px 0 5px 10px;
+    border-radius: 10px;
+    background: alpha(@background, .6);
+    box-shadow: 0px 0px 2px rgba(0, 0, 0, .6);
+}
+
+.modules-center {
+    padding: 7px;
+    margin: 10px 0 5px 0;
+    border-radius: 10px;
+    background: alpha(@background, .6);
+    box-shadow: 0px 0px 2px rgba(0, 0, 0, .6);
+}
+
+.modules-right {
+    padding: 7px;
+    margin: 10px 10px 5px 0;
+    border-radius: 10px;
+    background: alpha(@background, .6);
+    box-shadow: 0px 0px 2px rgba(0, 0, 0, .6);
+}
+
+/* Tooltip Styles */
+tooltip {
+    background: @background;
+    color: @color7;
+}
+
+/* Hover Transitions for Modules */
+#clock:hover, 
+#custom-pacman:hover, 
+#custom-notification:hover, 
+#bluetooth:hover, 
+#network:hover, 
+#battery:hover, 
+#cpu:hover, 
+#memory:hover, 
+#temperature:hover {
+    transition: all .3s ease;
+    color: @color9;
+}
+
+/* Individual Module Padding & Colors */
+#clock,
+#custom-notification,
+#custom-pacman,
+#bluetooth,
+#network,
+#battery,
+#cpu,
+#memory,
+#temperature,
+#tray,
+#custom-colorpicker,
+#group-expand {
+    padding: 0 5px;
+    color: @color7;
+    transition: all .3s ease;
+}
+
+/* Workspace Styling */
+#workspaces {
+    padding: 0 5px;
+}
+
+#workspaces button {
+    all: unset;
+    padding: 0 5px;
+    color: alpha(@color9, .4);
+    transition: all .2s ease;
+}
+
+#workspaces button:hover {
+    color: rgba(0, 0, 0, 0);
+    border: none;
+    text-shadow: 0px 0px 1.5px rgba(0, 0, 0, .5);
+    transition: all 1s ease;
+}
+
+#workspaces button.active {
+    color: @color9;
+    border: none;
+    text-shadow: 0px 0px 2px rgba(0, 0, 0, .5);
+}
+
+#workspaces button.empty {
+    color: rgba(0, 0, 0, 0);
+    border: none;
+    text-shadow: 0px 0px 1.5px rgba(0, 0, 0, .2);
+}
+
+#workspaces button.empty:hover {
+    color: rgba(0, 0, 0, 0);
+    border: none;
+    text-shadow: 0px 0px 1.5px rgba(0, 0, 0, .5);
+    transition: all 1s ease;
+}
+
+#workspaces button.empty.active {
+    color: @color9;
+    border: none;
+    text-shadow: 0px 0px 2px rgba(0, 0, 0, .5);
+}
+
+/* Battery States */
+#battery.charging {
+    color: #26A65B;
+}
+
+#battery.warning:not(.charging) {
+    color: #ffbe61;
+}
+
+#battery.critical:not(.charging) {
+    color: #f53c3c;
+    animation-name: blink;
+    animation-duration: 0.5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+/* Custom Elements & Expanders */
+#custom-expand {
+    padding: 0 5px;
+    color: alpha(@foreground, .2);
+    text-shadow: 0px 0px 2px rgba(0, 0, 0, .7);
+    transition: all .3s ease; 
+}
+
+#custom-expand:hover {
+    color: rgba(255, 255, 255, .2);
+    text-shadow: 0px 0px 2px rgba(255, 255, 255, .5);
+}
+
+#custom-endpoint {
+    color: transparent;
+    text-shadow: 0px 0px 1.5px rgba(0, 0, 0, 1);
+}
+
+/* Tray & Menus */
+#tray menu * {
+    padding: 0 5px;
+    transition: all .3s ease; 
+}
+
+#tray menu separator {
+    padding: 0 5px;
+    transition: all .3s ease; 
+}
