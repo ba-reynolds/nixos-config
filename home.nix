@@ -53,6 +53,9 @@
     waybar.source = ./dotfiles/waybar;
     kitty.source = ./dotfiles/kitty;
     rofi.source = ./dotfiles/rofi;
+    mpv.source = ./dotfiles/mpv;  
+    # Hyprland and Hyprpaper 
+    "hypr".source = ./dotfiles/hypr;
   };
 
   # Let Home Manager manage itself
