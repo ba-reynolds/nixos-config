@@ -93,8 +93,15 @@ mount -o umask=077 "$BOOT_PART" /mnt/boot
 print_step "Generating hardware config..."
 nixos-generate-config --root /mnt
 
-print_step "Moving hardware-configuration.nix to nixos-config..."
-mv /mnt/etc/nixos/hardware-configuration.nix "/mnt$CONFIG_DEST/hardware-configuration.nix"
+# =========================
+# Copy repo into installed system
+# =========================
+print_step "Copying nixos-config repository into installed system..."
+mkdir -p "/mnt$USER_HOME"
+cp -rv . "/mnt$CONFIG_DEST"
+
+print_step "Moving hardware-configuration.nix into nixos-config..."
+mv /mnt/etc/nixos/hardware-configuration.nix "/mnt$CONFIG_DEST/hosts/bau-desktop/hardware-configuration.nix"
 
 print_step "Removing temporary /etc/nixos..."
 rm -rf /mnt/etc/nixos
