@@ -1,5 +1,5 @@
 {
-  description = "Hyprland on Nixos";
+  description = "Hyprland on NixOS - Multi-host configuration";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -16,20 +16,23 @@
   };
 
   outputs = { self, nixpkgs, home-manager, ... } @ inputs: {
-    nixosConfigurations.bau-pc = nixpkgs.lib.nixosSystem {
-      specialArgs = { inherit inputs; };
-      modules = [
-        ./configuration.nix
-        home-manager.nixosModules.home-manager
-        {
-          home-manager = {
-            useGlobalPkgs = true;
-            useUserPackages = true;
-            users.bau = import ./home.nix;
-            backupFileExtension = "backup";
-          };
-        }
-      ];
+    nixosConfigurations = {
+      bau-desktop = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit inputs; };
+        modules = [
+          ./hosts/bau-desktop/configuration.nix
+          home-manager.nixosModules.home-manager
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              users.bau = import ./home.nix; 
+              backupFileExtension = "backup";
+              extraSpecialArgs = { inherit inputs; };
+            };
+          }
+        ];
+      };
     };
   };
 }
