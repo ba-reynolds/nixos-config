@@ -2,7 +2,8 @@
 
 {
   imports = [
-    ./modules/wpick.nix
+    ./modules/home/wpick.nix
+    ./modules/home/waybar-scripts.nix
   ];
 
   # --- CUSTOM OPTIONS DEFINITION ---
@@ -61,6 +62,7 @@
       hyprshot        # take screenshot
       waybar
       pavucontrol     # ui when clicking gear icon in audio island, waybar
+      pulseaudio      # provides pactl, used to set volume in waybar
       rofi
       libnotify       # standard used for notifications
       nwg-displays    # ui to manage monitors
@@ -84,8 +86,8 @@
     programs.bash = {
       enable = true;
       shellAliases = {
-        nrs = "sudo nixos-rebuild switch --flake ${config.internal.nixosConfigPath}#bau-pc";
-        hms = "home-manager switch --flake ${config.internal.nixosConfigPath}#bau-pc";
+        nrs = "sudo nixos-rebuild switch --flake ${config.internal.nixosConfigPath}#";
+        hms = "home-manager switch --flake ${config.internal.nixosConfigPath}#";
       };
       initExtra = ''
         export PS1='\[\e[38;5;76m\]\u\[\e[0m\] in \[\e[38;5;32m\]\w\[\e[0m\] \\$ '

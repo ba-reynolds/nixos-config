@@ -15,7 +15,6 @@ INSTALL_DEVICE="${1:-}"
 LOG_DEVICE="${2:-}"
 
 ROOT_PART=""
-SWAP_PART=""
 BOOT_PART=""
 CONFIG_DEST="$USER_HOME/nixos-config"
 
@@ -60,29 +59,25 @@ print_step "Logging to $LOG_MNT/nixos-install.log"
 # =========================
 print_step "Partitioning $INSTALL_DEVICE..."
 parted "$INSTALL_DEVICE" --script -- mklabel gpt
-parted "$INSTALL_DEVICE" --script -- mkpart root ext4 512MB -8GB
-parted "$INSTALL_DEVICE" --script -- mkpart swap linux-swap -8GB 100%
 parted "$INSTALL_DEVICE" --script -- mkpart ESP fat32 1MB 512MB
-parted "$INSTALL_DEVICE" --script -- set 3 esp on
+parted "$INSTALL_DEVICE" --script -- set 1 esp on
+parted "$INSTALL_DEVICE" --script -- mkpart root ext4 512MB 100%
 
 # Determine partition names
 if [[ "$INSTALL_DEVICE" == *"nvme"* ]] || [[ "$INSTALL_DEVICE" == *"mmcblk"* ]]; then
-    ROOT_PART="${INSTALL_DEVICE}p1"
-    SWAP_PART="${INSTALL_DEVICE}p2"
-    BOOT_PART="${INSTALL_DEVICE}p3"
+    BOOT_PART="${INSTALL_DEVICE}p1"
+    ROOT_PART="${INSTALL_DEVICE}p2"
 else
-    ROOT_PART="${INSTALL_DEVICE}1"
-    SWAP_PART="${INSTALL_DEVICE}2"
-    BOOT_PART="${INSTALL_DEVICE}3"
+    BOOT_PART="${INSTALL_DEVICE}1"
+    ROOT_PART="${INSTALL_DEVICE}2"
 fi
 
 # =========================
 # Formatting
 # =========================
 print_step "Formatting partitions..."
-mkfs.ext4 -F -L nixos "$ROOT_PART"
-mkswap -L swap "$SWAP_PART"
 mkfs.fat -F 32 -n boot "$BOOT_PART"
+mkfs.ext4 -F -L nixos "$ROOT_PART"
 
 # =========================
 # Mounting
@@ -91,32 +86,18 @@ print_step "Mounting..."
 mount "$ROOT_PART" /mnt
 mkdir -p /mnt/boot
 mount -o umask=077 "$BOOT_PART" /mnt/boot
-# swapon "$SWAP_PART" # uncomment this to enable swapping
 
 # =========================
 # Config generation
 # =========================
-print_step "Generating config..."
+print_step "Generating hardware config..."
 nixos-generate-config --root /mnt
 
-print_step "Copying local config files..."
-# Copy all .nix files from current directory
-for nixfile in *.nix; do
-    [ -e "$nixfile" ] || continue
-    cp -v "$nixfile" /mnt/etc/nixos/
-done
+print_step "Moving hardware-configuration.nix to nixos-config..."
+mv /mnt/etc/nixos/hardware-configuration.nix "/mnt$CONFIG_DEST/hardware-configuration.nix"
 
-# Copy dotfiles directory if it exists
-if [ -d "./dotfiles" ]; then
-    print_step "Copying dotfiles directory..."
-    cp -rv ./dotfiles /mnt/etc/nixos/
-fi
-
-# Copy modules directory if it exists
-if [ -d "./modules" ]; then
-    print_step "Copying modules directory..."
-    cp -rv ./modules /mnt/etc/nixos/
-fi
+print_step "Removing temporary /etc/nixos..."
+rm -rf /mnt/etc/nixos
 
 # =========================
 # NixOS Installation
@@ -126,21 +107,12 @@ print_step "Installing NixOS..."
 INSTALL_FLAGS="--no-root-password"
 
 # If flake.lock doesn't exist, add the flag to skip writing it
-if [ ! -f "/mnt/etc/nixos/flake.lock" ]; then
+if [ ! -f "/mnt$CONFIG_DEST/flake.lock" ]; then
     print_step "Lockfile not found. Adding --no-write-lock-file to bypass assertion error."
     INSTALL_FLAGS="$INSTALL_FLAGS --no-write-lock-file"
 fi
 
-nixos-install $INSTALL_FLAGS --flake /mnt/etc/nixos#bau-pc
-
-# =========================
-# Move config to user directory
-# =========================
-print_step "Moving config to user directory..."
-mkdir -p "/mnt$CONFIG_DEST"
-mv /mnt/etc/nixos/* "/mnt$CONFIG_DEST/"
-rmdir /mnt/etc/nixos
-
+nixos-install $INSTALL_FLAGS --flake "/mnt$CONFIG_DEST#bau-desktop"
 
 # =========================
 # Password setup
