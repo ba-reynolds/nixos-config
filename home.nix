@@ -1,63 +1,119 @@
-{ config, pkgs, ... }:
-{
-  home.username = "bau";
-  home.stateVersion = "25.11";
+{ config, pkgs, lib, ... }:
 
-  # Packages moved from configuration.nix
-  home.packages = with pkgs; [
-    firefox
-    vscode
-    anki-bin
-    kitty
-    bat
-    btop
-    mpv
-    neofetch
-    wl-clipboard
-    tree
-    hyprpaper
+{
+  imports = [
+    ./modules/wpick.nix
   ];
 
-  programs.git = {
-    enable = true;
-    # Consider adding user config here:
-    # userName = "Your Name";
-    # userEmail = "your.email@example.com";
-  };
-  
-  programs.rofi.enable = true;
-  
-  programs.pywal = {
-    enable = true;
-    package = pkgs.pywal16;
-  };
-  
-  programs.bash = {
-    enable = true;
-    shellAliases = {
-      nrs = "sudo nixos-rebuild switch --flake ~/nixos-config#bau-pc";
+  # --- CUSTOM OPTIONS DEFINITION ---
+  options.internal = {
+    userName = lib.mkOption { 
+      type = lib.types.str; 
+      default = "bau"; 
     };
-    initExtra = ''
-      export PS1='\[\e[38;5;76m\]\u\[\e[0m\] in \[\e[38;5;32m\]\w\[\e[0m\] \\$ '
-      ns() {
-        nix shell ''${@/#/nixpkgs#}
-      }
-    '';
+    homeDirectory = lib.mkOption { 
+      type = lib.types.str; 
+      default = "/home/${config.internal.userName}"; 
+    };
+    nixosConfigPath = lib.mkOption { 
+      type = lib.types.str; 
+      default = "${config.internal.homeDirectory}/nixos-config"; 
+    };
+    dotfilesPath = lib.mkOption { 
+      type = lib.types.str; 
+      default = "${config.internal.nixosConfigPath}/dotfiles"; 
+    };
   };
 
-  home.file = {
-    ".vimrc".source = ./dotfiles/vim/.vimrc;
-  };
+  # --- CONFIGURATION ---
+  config = {
+    home.username      = config.internal.userName;
+    home.homeDirectory = config.internal.homeDirectory;
+    home.stateVersion   = "25.11";
 
-  xdg.configFile = {
-    waybar.source = ./dotfiles/waybar;
-    kitty.source = ./dotfiles/kitty;
-    rofi.source = ./dotfiles/rofi;
-    mpv.source = ./dotfiles/mpv;  
-    # Hyprland and Hyprpaper 
-    "hypr".source = ./dotfiles/hypr;
-  };
+    # allow apps to use our installed fonts
+    fonts.fontconfig.enable = true;
+    # use mako for notifications
+    services.mako.enable = true;
 
-  # Let Home Manager manage itself
-  programs.home-manager.enable = true;
+    home.packages = with pkgs; [
+      home-manager
+
+      # apps
+      firefox
+      vscode
+      anki-bin
+      mpv
+      spotify
+      ffmpeg
+
+      # terminal
+      kitty
+      tree
+      bat
+      btop
+      neofetch
+      wl-clipboard
+
+      # ui & qol tools
+      cliphist
+      hyprpaper       # set wallpaper
+      hyprshot        # take screenshot
+      waybar
+      pavucontrol     # ui when clicking gear icon in audio island, waybar
+      rofi
+      libnotify       # standard used for notifications
+      nwg-displays    # ui to manage monitors
+
+      # fonts
+      nerd-fonts.code-new-roman
+      nerd-fonts.sauce-code-pro
+      nerd-fonts.symbols-only
+
+      # --- Dolphin & File Management ---
+      kdePackages.dolphin
+      kdePackages.ark                   
+      kdePackages.qtsvg                 
+      kdePackages.kio-extras            
+      kdePackages.ffmpegthumbs          
+      kdePackages.kdegraphics-thumbnailers
+    ];
+
+    programs.git.enable = true;
+
+    programs.bash = {
+      enable = true;
+      shellAliases = {
+        nrs = "sudo nixos-rebuild switch --flake ${config.internal.nixosConfigPath}#bau-pc";
+        hms = "home-manager switch --flake ${config.internal.nixosConfigPath}#bau-pc";
+      };
+      initExtra = ''
+        export PS1='\[\e[38;5;76m\]\u\[\e[0m\] in \[\e[38;5;32m\]\w\[\e[0m\] \\$ '
+        ns() {
+          nix shell ''${@/#/nixpkgs#}
+        }
+      '';
+    };
+
+    xdg.terminal-exec = {
+      enable = true;
+      settings = {
+        default = [ "kitty.desktop" ];
+      };
+    };
+
+    # --- DOTFILES MANAGEMENT ---
+    # All files are symlinked directly to the local dotfiles directory
+    home.file = {
+      ".vimrc".source = config.lib.file.mkOutOfStoreSymlink "${config.internal.dotfilesPath}/vim/.vimrc";
+    };
+
+    xdg.configFile = {
+      "waybar".source = config.lib.file.mkOutOfStoreSymlink "${config.internal.dotfilesPath}/waybar";
+      "kitty".source  = config.lib.file.mkOutOfStoreSymlink "${config.internal.dotfilesPath}/kitty";
+      "rofi".source   = config.lib.file.mkOutOfStoreSymlink "${config.internal.dotfilesPath}/rofi";
+      "mpv".source    = config.lib.file.mkOutOfStoreSymlink "${config.internal.dotfilesPath}/mpv";
+      "hypr".source   = config.lib.file.mkOutOfStoreSymlink "${config.internal.dotfilesPath}/hypr";
+    };
+  };
 }

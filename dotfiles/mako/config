@@ -1,0 +1,32 @@
+# --- LAYOUT & STYLE (Matches Waybar) ---
+max-history=100
+sort=-time
+layer=top
+# anchor=top-right
+anchor=bottom-right
+
+# Matches your Waybar margin: "10 15 0 15"
+margin=10,20,0,20
+padding=15
+width=350
+border-radius=12
+border-size=1
+
+# Matches your Waybar font family
+font=CodeNewRoman Nerd Font Mono 11
+
+# --- DYNAMIC COLORS (The "Issue #549" Way) ---
+# This pulls in the file you showed me: .cache/wal/colors-mako
+include=/home/bau/.cache/wal/colors-mako
+
+# --- OVERRIDES ---
+# Since Pywal's background is solid, if you want that 
+# 85% opacity from your Waybar, uncomment the line below:
+# background-color=#1c0c13d9
+
+[app-name=hyprshot]
+on-button-left=invoke-default-action
+
+[urgency=high]
+border-color=#6DB2CA
+default-timeout=0

@@ -1,166 +1,149 @@
-/* import generated thanks to pywal16 */
-@import url('~/.cache/bau/colors-waybar.css');
+@import url('../../.cache/wal/colors-waybar.css');
 
-/* Global Styles */
 * {
-    font-family: "CodeNewRoman Nerd Font Propo";
-    font-size: 15px;
+    font-family: "Symbols Nerd Font", "CodeNewRoman Nerd Font Mono";
+    font-size: 18px;
 }
 
 window#waybar {
     all: unset;
 }
 
-/* Module Group Layouts */
-.modules-left {
-    padding: 7px;
-    margin: 10px 0 5px 10px;
-    border-radius: 10px;
-    background: alpha(@background, .6);
-    box-shadow: 0px 0px 2px rgba(0, 0, 0, .6);
-}
-
-.modules-center {
-    padding: 7px;
-    margin: 10px 0 5px 0;
-    border-radius: 10px;
-    background: alpha(@background, .6);
-    box-shadow: 0px 0px 2px rgba(0, 0, 0, .6);
-}
-
-.modules-right {
-    padding: 7px;
-    margin: 10px 10px 5px 0;
-    border-radius: 10px;
-    background: alpha(@background, .6);
-    box-shadow: 0px 0px 2px rgba(0, 0, 0, .6);
-}
-
-/* Tooltip Styles */
-tooltip {
-    background: @background;
-    color: @color7;
-}
-
-/* Hover Transitions for Modules */
-#clock:hover, 
-#custom-pacman:hover, 
-#custom-notification:hover, 
-#bluetooth:hover, 
-#network:hover, 
-#battery:hover, 
-#cpu:hover, 
-#memory:hover, 
-#temperature:hover {
-    transition: all .3s ease;
-    color: @color9;
-}
-
-/* Individual Module Padding & Colors */
-#clock,
-#custom-notification,
-#custom-pacman,
-#bluetooth,
+/* Island Layouts */
+.modules-left>widget>box,
+.modules-center>widget>box,
+.modules-right>widget>box,
+#network.traffic,
+#custom-uptime,
 #network,
-#battery,
+#audio-drawer {
+    padding: 7px;
+    margin: 10px 5px;
+    border-radius: 12px;
+    background: rgba(30, 30, 30, 0.85); 
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Taskbar specific styling */
+#taskbar {
+    padding: 0 5px;
+}
+
+#taskbar button {
+    box-shadow: none;
+    text-shadow: none;
+    padding: 0 6px;
+    border-radius: 8px;
+    margin: 0 2px;
+    transition: all 0.3s ease;
+}
+
+#taskbar button.active {
+    background: rgba(255, 255, 255, 0.1);
+    border-bottom: 2px solid @color9;
+}
+
+#taskbar button:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* When the taskbar has no apps, kill the container styling */
+#taskbar.empty {
+    background: transparent;
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+
+
+/* Left-side specific text sizing */
 #cpu,
 #memory,
-#temperature,
-#tray,
-#custom-colorpicker,
-#group-expand {
-    padding: 0 5px;
+#custom-uptime,
+#network.traffic {
+    font-size: 14px;
+}
+
+/* Base Module Spacing & Color */
+#clock,
+#network,
+#cpu,
+#memory,
+#pulseaudio,
+#custom-screenshot,
+#custom-record,
+#custom-todo,
+#custom-monitoroff,
+#custom-power,
+#custom-vol-multiplier,
+#custom-audio-settings,
+#custom-uptime {
+    padding: 0 10px;
     color: @color7;
-    transition: all .3s ease;
+    transition: all 0.2s ease-in-out;
 }
 
-/* Workspace Styling */
-#workspaces {
-    padding: 0 5px;
+/* Fixed width for traffic to stop jitter */
+#network.traffic {
+    min-width: 190px;
 }
 
+/* Workspaces */
 #workspaces button {
     all: unset;
-    padding: 0 5px;
-    color: alpha(@color9, .4);
-    transition: all .2s ease;
+    margin: 0 5px;
+    color: alpha(@color7, 0.4);
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-#workspaces button:hover {
-    color: rgba(0, 0, 0, 0);
-    border: none;
-    text-shadow: 0px 0px 1.5px rgba(0, 0, 0, .5);
-    transition: all 1s ease;
+
+#workspaces button.empty {
+    color: alpha(@color7, 0.1);
 }
 
 #workspaces button.active {
+    color: @color2;
+    margin: 0 40px; /* Slightly reduced margin to accommodate taskbar */
+}
+
+
+/* Hover Effects */
+#clock:hover,
+#custom-screenshot:hover,
+#custom-record:hover,
+#custom-todo:hover,
+#custom-monitoroff:hover,
+#network:hover,
+#pulseaudio:hover,
+#cpu:hover,
+#memory:hover,
+#custom-power:hover,
+#custom-uptime:hover,
+#network.traffic:hover {
     color: @color9;
-    border: none;
-    text-shadow: 0px 0px 2px rgba(0, 0, 0, .5);
 }
 
-#workspaces button.empty {
-    color: rgba(0, 0, 0, 0);
-    border: none;
-    text-shadow: 0px 0px 1.5px rgba(0, 0, 0, .2);
+/* Audio Multiplier & Gear color */
+#custom-vol-multiplier:hover,
+#custom-audio-settings:hover {
+    color: @color12;
 }
 
-#workspaces button.empty:hover {
-    color: rgba(0, 0, 0, 0);
-    border: none;
-    text-shadow: 0px 0px 1.5px rgba(0, 0, 0, .5);
-    transition: all 1s ease;
+/* Utility states */
+#pulseaudio.muted {
+    color: alpha(@color7, 0.3);
 }
 
-#workspaces button.empty.active {
-    color: @color9;
-    border: none;
-    text-shadow: 0px 0px 2px rgba(0, 0, 0, .5);
+/* Tooltip Styling */
+tooltip {
+    background: alpha(@background, 0.95);
+    border-radius: 8px;
+    border: 1px solid alpha(@color9, 0.3);
+    padding: 4px;
 }
 
-/* Battery States */
-#battery.charging {
-    color: #26A65B;
-}
-
-#battery.warning:not(.charging) {
-    color: #ffbe61;
-}
-
-#battery.critical:not(.charging) {
-    color: #f53c3c;
-    animation-name: blink;
-    animation-duration: 0.5s;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-    animation-direction: alternate;
-}
-
-/* Custom Elements & Expanders */
-#custom-expand {
-    padding: 0 5px;
-    color: alpha(@foreground, .2);
-    text-shadow: 0px 0px 2px rgba(0, 0, 0, .7);
-    transition: all .3s ease; 
-}
-
-#custom-expand:hover {
-    color: rgba(255, 255, 255, .2);
-    text-shadow: 0px 0px 2px rgba(255, 255, 255, .5);
-}
-
-#custom-endpoint {
-    color: transparent;
-    text-shadow: 0px 0px 1.5px rgba(0, 0, 0, 1);
-}
-
-/* Tray & Menus */
-#tray menu * {
-    padding: 0 5px;
-    transition: all .3s ease; 
-}
-
-#tray menu separator {
-    padding: 0 5px;
-    transition: all .3s ease; 
+tooltip label {
+    color: @color7;
+    font-size: 13px;
+    padding: 4px 8px;
 }
