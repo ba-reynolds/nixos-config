@@ -109,11 +109,12 @@
     };
 
     xdg.configFile = {
-      "waybar".source = config.lib.file.mkOutOfStoreSymlink "${config.internal.dotfilesPath}/waybar";
-      "kitty".source  = config.lib.file.mkOutOfStoreSymlink "${config.internal.dotfilesPath}/kitty";
-      "rofi".source   = config.lib.file.mkOutOfStoreSymlink "${config.internal.dotfilesPath}/rofi";
-      "mpv".source    = config.lib.file.mkOutOfStoreSymlink "${config.internal.dotfilesPath}/mpv";
       "hypr".source   = config.lib.file.mkOutOfStoreSymlink "${config.internal.dotfilesPath}/hypr";
+      "kitty".source  = config.lib.file.mkOutOfStoreSymlink "${config.internal.dotfilesPath}/kitty";
+      "mako".source  = config.lib.file.mkOutOfStoreSymlink "${config.internal.dotfilesPath}/mako";
+      "mpv".source  = config.lib.file.mkOutOfStoreSymlink "${config.internal.dotfilesPath}/mpv";
+      "rofi".source   = config.lib.file.mkOutOfStoreSymlink "${config.internal.dotfilesPath}/rofi";
+      "waybar".source = config.lib.file.mkOutOfStoreSymlink "${config.internal.dotfilesPath}/waybar";
     };
   };
 }
