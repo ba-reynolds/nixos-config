@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# 1. Get the selected path (if right-clicking a folder)
+# 2. If nothing selected, use the current directory
+# 3. Strip 'file://' and handle URI encoding
+
+SELECTED_PATH=$(echo "$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS" | awk 'NF' | head -n 1)
+
+if [ -n "$SELECTED_PATH" ] && [ -d "$SELECTED_PATH" ]; then
+    TARGET="$SELECTED_PATH"
+else
+    TARGET=$(echo "$NAUTILUS_SCRIPT_CURRENT_URI" | sed 's/file:\/\///' | sed 's/%20/ /g')
+fi
+
+kitty --directory "$TARGET"

@@ -1,149 +1,166 @@
-@import url('../../.cache/wal/colors-waybar.css');
+@import url('../../.cache/wal/colors-waybar.css'); 
 
-* {
-    font-family: "Symbols Nerd Font", "CodeNewRoman Nerd Font Mono";
-    font-size: 18px;
-}
+* { 
+    font-family: "Symbols Nerd Font", "CodeNewRoman Nerd Font Mono"; 
+    font-size: 18px; 
+} 
 
-window#waybar {
-    all: unset;
-}
+window#waybar { 
+    all: unset; 
+} 
 
-/* Island Layouts */
-.modules-left>widget>box,
-.modules-center>widget>box,
-.modules-right>widget>box,
+/* --- Island Layouts --- */ 
+.modules-left>widget>box, 
+.modules-center>widget>box, 
+.modules-right>widget>box, 
+#network.traffic, 
+#custom-uptime, 
+#network, 
+#clock, 
+#audio-drawer,
+#power-drawer,
+#media-island { 
+    padding: 7px; 
+    margin: 10px 5px; 
+    border-radius: 12px; 
+    background: rgba(30, 30, 30, 0.85);  
+    border: 1px solid rgba(255, 255, 255, 0.08); 
+} 
+
+/* --- Taskbar Specific --- */ 
+#taskbar { 
+    padding: 0 5px; 
+} 
+
+#taskbar button { 
+    box-shadow: none; 
+    text-shadow: none; 
+    padding: 0 6px; 
+    border-radius: 8px; 
+    margin: 0 2px; 
+    transition: all 0.3s ease; 
+} 
+
+#taskbar button.active { 
+    background: rgba(255, 255, 255, 0.1); 
+    border-bottom: 2px solid @color9; 
+} 
+
+#taskbar button:hover { 
+    background: rgba(255, 255, 255, 0.15); 
+} 
+
+#taskbar.empty { 
+    background: transparent; 
+    border: none; 
+    margin: 0; 
+    padding: 0; 
+} 
+
+/* --- Sub-module font scaling --- */
+#cpu, 
+#memory, 
+#custom-uptime, 
 #network.traffic,
+#custom-song-title { 
+    font-size: 14px; 
+} 
+
+/* --- Base Module Spacing & Color --- */ 
+#clock, 
+#network, 
+#cpu, 
+#memory, 
+#custom-power, 
+#custom-reboot, 
+#pulseaudio, 
+#custom-screenshot, 
+#custom-record, 
+#custom-todo, 
+#custom-monitoroff, 
+#custom-vol-multiplier, 
+#custom-audio-settings, 
 #custom-uptime,
-#network,
-#audio-drawer {
-    padding: 7px;
-    margin: 10px 5px;
-    border-radius: 12px;
-    background: rgba(30, 30, 30, 0.85); 
-    border: 1px solid rgba(255, 255, 255, 0.08);
-}
+#custom-prev,
+#custom-next,
+#custom-play-pause,
+#custom-song-title { 
+    padding: 0 10px; 
+    color: @color7; 
+    transition: all 0.2s ease-in-out; 
+} 
 
-/* Taskbar specific styling */
-#taskbar {
-    padding: 0 5px;
-}
+#network.traffic { 
+    min-width: 190px; 
+} 
 
-#taskbar button {
-    box-shadow: none;
-    text-shadow: none;
-    padding: 0 6px;
-    border-radius: 8px;
-    margin: 0 2px;
-    transition: all 0.3s ease;
-}
+/* --- Workspaces --- */
+#workspaces button { 
+    all: unset; 
+    margin: 0 5px; 
+    color: alpha(@color7, 0.4); 
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); 
+} 
 
-#taskbar button.active {
-    background: rgba(255, 255, 255, 0.1);
-    border-bottom: 2px solid @color9;
-}
+#workspaces button.empty { 
+    color: alpha(@color7, 0.1); 
+} 
 
-#taskbar button:hover {
-    background: rgba(255, 255, 255, 0.15);
-}
+#workspaces button.active { 
+    color: @color2; 
+    margin: 0 40px; 
+} 
 
-/* When the taskbar has no apps, kill the container styling */
-#taskbar.empty {
-    background: transparent;
-    border: none;
-    margin: 0;
-    padding: 0;
-}
-
-
-/* Left-side specific text sizing */
-#cpu,
-#memory,
-#custom-uptime,
-#network.traffic {
-    font-size: 14px;
-}
-
-/* Base Module Spacing & Color */
-#clock,
-#network,
-#cpu,
-#memory,
-#pulseaudio,
-#custom-screenshot,
-#custom-record,
-#custom-todo,
-#custom-monitoroff,
-#custom-power,
-#custom-vol-multiplier,
-#custom-audio-settings,
-#custom-uptime {
-    padding: 0 10px;
-    color: @color7;
-    transition: all 0.2s ease-in-out;
-}
-
-/* Fixed width for traffic to stop jitter */
-#network.traffic {
-    min-width: 190px;
-}
-
-/* Workspaces */
-#workspaces button {
-    all: unset;
-    margin: 0 5px;
-    color: alpha(@color7, 0.4);
-    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-
-#workspaces button.empty {
-    color: alpha(@color7, 0.1);
-}
-
-#workspaces button.active {
-    color: @color2;
-    margin: 0 40px; /* Slightly reduced margin to accommodate taskbar */
-}
-
-
-/* Hover Effects */
-#clock:hover,
-#custom-screenshot:hover,
-#custom-record:hover,
-#custom-todo:hover,
-#custom-monitoroff:hover,
-#network:hover,
-#pulseaudio:hover,
-#cpu:hover,
-#memory:hover,
-#custom-power:hover,
+/* --- Hover Effects --- */ 
+#clock:hover, 
+#custom-reboot:hover, 
+#custom-screenshot:hover, 
+#custom-record:hover, 
+#custom-todo:hover, 
+#custom-monitoroff:hover, 
+#network:hover, 
+#pulseaudio:hover, 
+#cpu:hover, 
+#memory:hover, 
+#custom-power:hover, 
 #custom-uptime:hover,
-#network.traffic:hover {
-    color: @color9;
+#custom-prev:hover,
+#custom-next:hover, 
+#custom-play-pause:hover,
+#network.traffic:hover { 
+    color: @color9; 
+} 
+
+#custom-vol-multiplier:hover, 
+#custom-audio-settings:hover { 
+    color: @color12; 
+} 
+
+#pulseaudio.muted { 
+    color: alpha(@color7, 0.3); 
+} 
+
+/* --- Tooltips --- */
+tooltip { 
+    background: alpha(@background, 0.95); 
+    border-radius: 8px; 
+    border: 1px solid alpha(@color9, 0.3); 
+    padding: 4px; 
+} 
+
+tooltip label { 
+    color: @color7; 
+    font-size: 13px; 
+    padding: 4px 8px; 
+} 
+
+/* --- Media Island Specifics --- */ 
+#custom-song-title { 
+    padding: 0 5px; 
+    color: @color2; 
+    font-weight: bold;
 }
 
-/* Audio Multiplier & Gear color */
-#custom-vol-multiplier:hover,
-#custom-audio-settings:hover {
-    color: @color12;
-}
-
-/* Utility states */
-#pulseaudio.muted {
-    color: alpha(@color7, 0.3);
-}
-
-/* Tooltip Styling */
-tooltip {
-    background: alpha(@background, 0.95);
-    border-radius: 8px;
-    border: 1px solid alpha(@color9, 0.3);
-    padding: 4px;
-}
-
-tooltip label {
-    color: @color7;
-    font-size: 13px;
-    padding: 4px 8px;
+#custom-prev, #custom-next, #custom-play-pause {
+    font-size: 16px;
 }
