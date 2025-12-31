@@ -1,0 +1,83 @@
+/* Import pywal colors */
+@import "~/.cache/wal/colors-rofi-dark.rasi"
+
+* {
+    font: "CodeNewRoman Nerd Font Mono 12";
+    bg-alpha:      rgba(30, 30, 30, 0.85); 
+    border-color:  rgba(255, 255, 255, 0.08);
+
+    background-color:   transparent;
+    text-color:         @foreground;
+    margin:     0;
+    padding:    0;
+    spacing:    0;
+}
+
+window {
+    background-color:   @bg-alpha;
+    location:           west;
+    anchor:             west;
+    height:             100%;
+    width:              420px;
+    x-offset:           0;
+
+    /* Format: Top Right Bottom Left */
+    margin:             20px 0px 20px 20px;
+    border-radius:      12px; /* Waybar Island radius */
+    border:             1px;
+    border-color:       @border-color;
+    children:           [ listview ];
+}
+
+listview {
+    columns:        2;
+    spacing:        15px;
+    padding:        20px;
+    cycle:          true;
+    dynamic:        true;
+    layout:         vertical;
+    fixed-columns:  true;
+}
+
+/* --- SCROLLBAR STYLING --- */
+scrollbar {
+    width:        6px;          /* Total width of the scrollbar area */
+    border:       0px;
+    handle-width: 6px;          /* Match this to width for a seamless pill shape */
+    padding:      0;
+    
+    /* Apply radius to the track background */
+    border-radius: 12px; 
+    
+    /* Colors */
+    handle-color:     @active-background;
+    background-color: rgba(255, 255, 255, 0.05); 
+    
+    /* Spacing */
+    margin:       0px 0px 0px 8px;
+}
+
+element {
+    orientation:    vertical;
+    padding:        10px;
+    border-radius:  12px;
+    background-color: transparent;
+}
+
+element selected.normal {
+    background-color: rgba(255, 255, 255, 0.1);
+    border:           2px;
+    border-color:     @active-background;
+}
+
+element-icon {
+    /* Use a fixed pixel size or 'expand' to fill the column width */
+    size:           170px; 
+    cursor:         pointer;
+    horizontal-align: 0.5;
+}
+
+element-text {
+    /* Completely hide the filename text */
+    enabled:        false;
+}

@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# Get the first selected file's absolute path
+# Nautilus provides absolute paths in this variable, one per line
+IMG_PATH=$(echo "$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS" | head -n 1)
+
+if [ -n "$IMG_PATH" ]; then
+    wpick "$IMG_PATH"
+fi

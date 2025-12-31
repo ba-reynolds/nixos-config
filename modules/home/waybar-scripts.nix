@@ -18,7 +18,7 @@ let
   };
 
   # --- VOLUME STEP SCRIPT ---
-  wb-vol-step = pkgs.writeShellApplication {
+wb-vol-step = pkgs.writeShellApplication {
     name = "wb-vol-step";
     runtimeInputs = [ 
       pkgs.coreutils # For cat and echo
@@ -26,25 +26,40 @@ let
     ];
     text = ''
       STATE_FILE="/tmp/vol_step"
-      curr=$(cat "$STATE_FILE" 2>/dev/null || echo 5)
+      # Default to 1 if the file doesn't exist
+      curr=$(cat "$STATE_FILE" 2>/dev/null || echo 1)
 
       case "''${1:-}" in
         up)
-          if [ "$curr" -lt 10 ]; then echo $((curr + 1)) > "$STATE_FILE"; fi
+          case "$curr" in
+            1)  next=2 ;;
+            2)  next=5 ;;
+            5)  next=10 ;;
+            10) next=10 ;; # Stay at 10
+            *)  next=1 ;;
+          esac
+          echo "$next" > "$STATE_FILE"
+          pkill -RTMIN+1 waybar || true
           ;;
         down)
-          if [ "$curr" -gt 1 ]; then echo $((curr - 1)) > "$STATE_FILE"; fi
+          case "$curr" in
+            10) next=5 ;;
+            5)  next=2 ;;
+            2)  next=1 ;;
+            1)  next=1 ;; # Stay at 1
+            *)  next=1 ;;
+          esac
+          echo "$next" > "$STATE_FILE"
+          pkill -RTMIN+1 waybar || true
           ;;
         reset)
           echo 1 > "$STATE_FILE"
+          pkill -RTMIN+1 waybar || true
           ;;
         get)
-          cat "$STATE_FILE" 2>/dev/null || echo 5
+          cat "$STATE_FILE" 2>/dev/null || echo 1
           ;;
       esac
-      
-      # Refresh waybar; || true prevents script exit if waybar isn't found
-      pkill -RTMIN+1 waybar || true
     '';
   };
 
@@ -100,7 +115,7 @@ let
               while ps -p "$PID" > /dev/null; do sleep 0.2; done
 
               ffmpeg -y -i "$FILENAME" -ss 00:00:00.500 -vframes 1 "$THUMB" > /dev/null 2>&1
-              notify-send -i "$THUMB" "Recording Saved" "File: $(basename "$FILENAME")"
+              notify-send -a "wb-screen-record" -i "$THUMB" "Recording Saved" "File: $(basename "$FILENAME")"
               
               rm -f "$PID_FILE" "$START_TIME_FILE" "$PATH_FILE"
               pkill -RTMIN+2 waybar || true
@@ -127,11 +142,50 @@ let
       esac
     '';
   };
+
+  # --- PLAYER STATUS ICON (Play/Pause) ---
+  wb-player-status = pkgs.writeShellApplication {
+    name = "wb-player-status";
+    runtimeInputs = [ pkgs.playerctl pkgs.coreutils ];
+    text = ''
+      get_icon() {
+          # Added -p spotify,%any to prioritize Spotify
+          status=$(playerctl -p spotify,%any status 2>/dev/null || echo "Stopped")
+          if [ "$status" = "Playing" ]; then echo "󰏤"; 
+          elif [ "$status" = "Paused" ]; then echo "󰐊";
+          else echo ""; fi
+      }
+      get_icon
+      # Follow prioritized player changes
+      playerctl -p spotify,%any status --follow 2>/dev/null | while read -r _; do
+          get_icon
+      done
+    '';
+  };
+
+  # --- PLAYER METADATA (Song - Artist) ---
+wb-player-metadata = pkgs.writeShellApplication {
+    name = "wb-player-metadata";
+    runtimeInputs = [ pkgs.playerctl pkgs.coreutils ];
+    text = ''
+      get_meta() {
+          meta=$(playerctl -p spotify,%any metadata --format '{{title}} - {{artist}}' 2>/dev/null || echo "")
+          echo "$meta"
+      }
+      get_meta
+      # Follow prioritized metadata changes
+      playerctl -p spotify,%any metadata --follow --format '{{title}}' 2>/dev/null | while read -r _; do
+          get_meta
+      done
+    '';
+  };
 in
 {
   home.packages = [ 
     wb-uptime 
     wb-vol-step 
-    wb-screen-record 
+    wb-screen-record
+    wb-player-status
+    wb-player-metadata
   ];
 }

@@ -1,0 +1,55 @@
+{
+    "window.zoomLevel": 1,
+    "workbench.colorTheme": "GitHub Dark",
+    "terminal.integrated.defaultProfile.windows": "Command Prompt",
+    "files.autoSave": "afterDelay",
+    "files.autoSaveDelay": 10,
+    "explorer.sortOrder": "type",
+    "editor.minimap.enabled": false,
+    "explorer.confirmDelete": false,
+    "explorer.confirmDragAndDrop": false,
+    "editor.codeActionsOnSave": {
+        "source.addMissingImports": "explicit",
+        "source.organizeImports": "explicit"
+    },
+    "python.analysis.indexing": true,
+    "python.analysis.autoImportCompletions": true,
+    "python.terminal.activateEnvInCurrentTerminal": true,
+    "python.terminal.activateEnvironment": true,
+    "files.exclude": {
+        ".venv": true,
+        "**/__pycache__": true,
+        "venv": true
+    },
+    "workbench.iconTheme": "material-icon-theme",
+    // https://stackoverflow.com/a/78975820
+    "explorer.excludeGitIgnore": false,
+    "search.useParentIgnoreFiles": false,
+    "search.useIgnoreFiles": false,
+    "editor.largeFileOptimizations": false,
+    "github.copilot.enable": {
+        "*": false,
+        "plaintext": false,
+        "markdown": false,
+        "scminput": false
+    },
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "security.workspace.trust.untrustedFiles": "open",
+    "python.analysis.typeCheckingMode": "standard",
+    "[html]": {
+        "editor.defaultFormatter": "vscode.html-language-features"
+    },
+    "editor.accessibilitySupport": "off",
+    "[json]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "json.copyJsonPath.useBracketNotation": true,
+    "[jsonc]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "[latex]": {
+        "editor.defaultFormatter": "mathematic.vscode-latex"
+    },
+    "keyboard.dispatch": "keyCode",
+    "terminal.integrated.copyOnSelection": true,
+}

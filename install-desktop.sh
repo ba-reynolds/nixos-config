@@ -131,6 +131,16 @@ print_step "Setting $USER_NAME password..."
 nixos-enter --root /mnt -c "passwd $USER_NAME"
 
 # =========================
+# Fix Permissions
+# =========================
+print_step "Fixing ownership of $CONFIG_DEST... and $USER_HOME"
+
+# We use nixos-enter so we can use the name 'bau' and group 'users'
+# instead of relying on the ID 1000.
+nixos-enter --root /mnt -c "chown -R $USER_NAME:users $CONFIG_DEST"
+nixos-enter --root /mnt -c "chown $USER_NAME:users $USER_HOME"
+
+# =========================
 # Cleanup log mount
 # =========================
 umount "$LOG_MNT"

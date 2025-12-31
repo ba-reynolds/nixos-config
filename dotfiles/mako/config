@@ -30,3 +30,9 @@ on-button-left=invoke-default-action
 [urgency=high]
 border-color=#6DB2CA
 default-timeout=0
+
+[app-name="wb-screen-record"]
+on-button-left=exec nautilus ~/Videos/Recordings; makoctl dismiss -n "$id"
+
+[app-name="Hyprshot"]
+on-button-left=exec nautilus ~/Pictures/Screenshots; makoctl dismiss -n "$id"

@@ -52,10 +52,15 @@ in
 
     xdg.desktopEntries."wpick" = {
       name = "Set as Wallpaper";
-      exec = "wpick %f";
+      # Use %f for a single file, but Nautilus sometimes prefers %u (URL)
+      # Adding 'NoDisplay=false' ensures it isn't hidden by the DE
+      exec = "${lib.getExe wpick} %f"; 
       icon = "image-x-generic";
       mimeType = [ "image/jpeg" "image/png" "image/gif" "image/webp" ];
       categories = [ "Utility" ];
+      settings = {
+        NoDisplay = "false";
+      };
     };
   };
 }

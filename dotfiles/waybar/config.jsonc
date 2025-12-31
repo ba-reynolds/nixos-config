@@ -2,11 +2,12 @@
     "layer": "top",
     "position": "top",
     "margin": "10 15 0 15",
+    "output": "DP-3",
     "reload_style_on_change": true,
     "modules-left": [
         "group/hardware",
         "network#traffic", 
-        "custom/uptime",   
+        "custom/uptime",
         "group/tools"
     ],
     "modules-center": [
@@ -14,13 +15,52 @@
         "wlr/taskbar"
     ],
     "modules-right": [
-        "network",         
+        "group/media-island",
         "group/audio-drawer",
-        "group/stats"
+        "network",         
+        "clock",
+        "group/power-drawer"
     ],
+
+    /* --- MEDIA CONTROL ISLAND --- */
+    "group/media-island": {
+        "orientation": "horizontal",
+        "modules": [
+            "custom/prev",
+            "custom/play-pause",
+            "custom/next",
+            "custom/song-title"
+        ]
+    },
+
+    "custom/song-title": {
+        "exec": "wb-player-metadata",
+        "format": "{}",
+        "max-length": 10,
+        "tooltip": true,
+        "on-click": "playerctl -p spotify,%any play-pause"
+    },
+
+    "custom/play-pause": {
+        "exec": "wb-player-status",
+        "format": "{}",
+        "on-click": "playerctl -p spotify,%any play-pause",
+        "tooltip": false
+    },
+    "custom/prev": {
+        "format": "󰒮",
+        "on-click": "playerctl -p spotify,%any previous",
+        "tooltip": false
+    },
+    "custom/next": {
+        "format": "󰒭",
+        "on-click": "playerctl -p spotify,%any next",
+        "tooltip": false
+},
 
     /* --- TASKBAR --- */
     "wlr/taskbar": {
+        "cursor": false,
         "format": "{icon}",
         "icon-size": 18,
         "icon-theme": "Numix-Circle",
@@ -42,7 +82,7 @@
         "on-click": "kitty nload"
     },
 
-    /* --- UPTIME (Cleaned) --- */
+    /* --- UPTIME --- */
     "custom/uptime": {
         "exec": "wb-uptime",
         "format": "󱎫 {}",
@@ -121,14 +161,14 @@
     /* --- TOOLS --- */
     "group/tools": {
         "orientation": "horizontal",
-        "modules": ["custom/record", "custom/screenshot", "custom/todo", "custom/monitoroff"]
+        "modules": ["custom/record", "custom/screenshot", "custom/todo"]
     },
     "custom/screenshot": {
         "format": "󰄀",
         "tooltip-format": "Left: Region\nRight: Window\nMiddle: Monitor",
-        "on-click": "hyprshot -m region",
-        "on-click-right": "hyprshot -m window",
-        "on-click-middle": "hyprshot -m output"
+        "on-click": "hyprshot -m region -o ~/Pictures/Screenshots",
+        "on-click-right": "hyprshot -m window -o ~/Pictures/Screenshots",
+        "on-click-middle": "hyprshot -m output -o ~/Pictures/Screenshots"
     },
     "custom/record": {
         "exec": "wb-screen-record status",
@@ -146,31 +186,51 @@
         "tooltip": false
     },
 
-    "custom/monitoroff": {
-        "format": "󰶐",
-        "on-click": "sleep 1 && hyprctl dispatch dpms off",
-        "tooltip": false
-    },
-
+    /* --- WORKSPACES --- */
     "hyprland/workspaces": {
         "format": "{icon}",
         "format-icons": { "active": "", "default": "", "empty": "" },
-        "persistent-workspaces": { "*": [1, 2, 3, 4, 5] }
+        "persistent-workspaces": { "*": [1, 2, 3, 4, 5] },
+        "on-click-middle": "hyprctl dispatch workspace %s && hyprctl dispatch closewindow"
     },
 
-    "group/stats": {
-        "orientation": "horizontal",
-        "modules": ["clock", "custom/power"]
-    },
-
+    /* --- CLOCK --- */
     "clock": {
         "timezone": "America/Argentina/Buenos_Aires",
         "format": "{:%a %d/%m  <span weight='ultrabold'>%H:%M</span>}",
         "tooltip-format": "<tt>{calendar}</tt>"
     },
 
+    /* --- POWER DRAWER --- */
+    "group/power-drawer": {
+        "orientation": "horizontal",
+        "drawer": {
+            "transition-duration": 500,
+            "transition-left-to-right": false,
+            "click-to-reveal": false
+        },
+        "modules": [
+            "custom/power",
+            "custom/monitoroff",
+            "custom/reboot"
+        ]
+    },
+
+    "custom/reboot": {
+        "format": "",
+        "on-click": "reboot",
+        "tooltip": false
+    },
+
     "custom/power": {
-        "format": "⏻",
-        "on-click": "shutdown now"
+        "format": "",
+        "on-click": "shutdown now",
+        "tooltip": false
+    },
+
+    "custom/monitoroff": {
+        "format": "󰶐",
+        "on-click": "sleep 1 && hyprctl dispatch dpms off",
+        "tooltip": false
     }
 }

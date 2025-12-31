@@ -1,4 +1,5 @@
-{ pkgs, ... }: {
+{ pkgs, ... }:
+{
   time.timeZone = "America/Argentina/Buenos_Aires";
   i18n.defaultLocale = "en_US.UTF-8";
   console.keyMap = "la-latin1";
