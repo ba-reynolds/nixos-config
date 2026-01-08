@@ -149,32 +149,32 @@ wb-vol-step = pkgs.writeShellApplication {
     runtimeInputs = [ pkgs.playerctl pkgs.coreutils ];
     text = ''
       get_icon() {
-          # Added -p spotify,%any to prioritize Spotify
-          status=$(playerctl -p spotify,%any status 2>/dev/null || echo "Stopped")
+          # Added -p io.bassi.Amberol,spotify,%any to prioritize Spotify
+          status=$(playerctl -p io.bassi.Amberol,spotify,%any status 2>/dev/null || echo "Stopped")
           if [ "$status" = "Playing" ]; then echo "󰏤"; 
           elif [ "$status" = "Paused" ]; then echo "󰐊";
           else echo ""; fi
       }
       get_icon
       # Follow prioritized player changes
-      playerctl -p spotify,%any status --follow 2>/dev/null | while read -r _; do
+      playerctl -p io.bassi.Amberol,spotify,%any status --follow 2>/dev/null | while read -r _; do
           get_icon
       done
     '';
   };
 
   # --- PLAYER METADATA (Song - Artist) ---
-wb-player-metadata = pkgs.writeShellApplication {
+  wb-player-metadata = pkgs.writeShellApplication {
     name = "wb-player-metadata";
     runtimeInputs = [ pkgs.playerctl pkgs.coreutils ];
     text = ''
       get_meta() {
-          meta=$(playerctl -p spotify,%any metadata --format '{{title}} - {{artist}}' 2>/dev/null || echo "")
+          meta=$(playerctl -p io.bassi.Amberol,spotify,%any metadata --format '{{title}} - {{artist}}' 2>/dev/null || echo "")
           echo "$meta"
       }
       get_meta
       # Follow prioritized metadata changes
-      playerctl -p spotify,%any metadata --follow --format '{{title}}' 2>/dev/null | while read -r _; do
+      playerctl -p io.bassi.Amberol,spotify,%any metadata --follow --format '{{title}}' 2>/dev/null | while read -r _; do
           get_meta
       done
     '';

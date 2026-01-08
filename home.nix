@@ -47,13 +47,19 @@
       # apps
       firefox
       vscode
-      anki-bin
+      anki
       spotify
       ffmpeg
       qbittorrent
       nautilus
       copyparty
-      google-chrome
+      (google-chrome.override {
+        commandLineArgs = [
+          "--enable-blink-features=MiddleClickAutoscroll"
+        ];
+      })
+      xed-editor
+      amberol
 
       # terminal
       kitty
@@ -62,6 +68,17 @@
       btop
       neofetch
       wl-clipboard
+      claude-code
+      yt-dlp
+      python311
+
+      # fix for anki extension
+      mecab
+
+      # play vidya
+      lutris
+      wineWowPackages.stable
+      winetricks
 
       # ui & qol tools
       cliphist
@@ -80,6 +97,7 @@
       nerd-fonts.code-new-roman
       nerd-fonts.sauce-code-pro
       nerd-fonts.symbols-only
+      noto-fonts-cjk-sans       # jp font
       papirus-icon-theme
     ];
 
@@ -110,7 +128,16 @@
     };
 
     # --- Programs ---
-    programs.git.enable = true;
+    programs.git = {
+        enable = true;
+        userName = "ba-reynolds";
+        userEmail = "166666791+ba-reynolds@users.noreply.github.com";
+        
+        # Optional: adds extra settings to your .gitconfig
+        extraConfig = {
+          init.defaultBranch = "master";
+        };
+    };
 
     programs.mpv = {
       enable = true;
@@ -119,17 +146,26 @@
       ];
     };
 
+    
+
     programs.bash = {
       enable = true;
       shellAliases = {
+        # Full update
         nrs = "sudo nixos-rebuild switch --flake ${config.internal.nixosConfigPath}#";
-        hms = "home-manager switch --flake ${config.internal.nixosConfigPath}#";
+        # The "test" update (faster, doesn't add to boot menu, just applies to current session)
+        nrt = "sudo nixos-rebuild test --flake ${config.internal.nixosConfigPath}";
       };
       initExtra = ''
         export PS1='\[\e[38;5;76m\]\u\[\e[0m\] in \[\e[38;5;32m\]\w\[\e[0m\] \\$ '
         ns() {
           nix shell ''${@/#/nixpkgs#}
         }
+        # add environment variables that shouldn't be commited
+        # not portable but it werks
+        if [ -f ~/.secrets ]; then
+          . ~/.secrets
+        fi
       '';
     };
 
@@ -150,6 +186,19 @@
       };
     };
 
+    xdg.desktopEntries.xed = {
+      name = "Xed";
+      genericName = "Text Editor";
+      exec = "xed --new-window %U";
+      terminal = false;
+      type = "Application";
+      categories = [ "GNOME" "GTK" "Utility" "TextEditor" ];
+      mimeType = [ "text/plain" ];
+      icon = "xed";
+    };
+
+    
+
     xdg.mimeApps = {
       enable = true;
       defaultApplications = {
@@ -162,12 +211,14 @@
         "video/mpeg" = [ "mpv.desktop" ];
         "video/ogg" = [ "mpv.desktop" ];
         "video/avi" = [ "mpv.desktop" ];
-        # image%h/.config/copyparty/copyparty.conf
+        # image
         "image/jpeg" = [ "mpv.desktop" ];
         "image/png" = [ "mpv.desktop" ];
         "image/gif" = [ "mpv.desktop" ];
         "image/webp" = [ "mpv.desktop" ];
-      };        
+        # text
+        "text/plain" = [ "xed-editor.desktop" ];
+      };
     };
 
 
@@ -180,7 +231,7 @@
       ".local/share/nautilus/scripts/Set as Wallpaper".source = config.lib.file.mkOutOfStoreSymlink "${config.internal.dotfilesPath}/nautilus/scripts/Set as Wallpaper";
       ".local/share/nautilus/scripts/Open in Kitty".source = config.lib.file.mkOutOfStoreSymlink "${config.internal.dotfilesPath}/nautilus/scripts/Open in Kitty";
     };
-  
+
     xdg.dataFile = {
       "kio/servicemenus".source = config.lib.file.mkOutOfStoreSymlink "${config.internal.dotfilesPath}/kio";
     };

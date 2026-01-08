@@ -1,8 +1,17 @@
 { pkgs, ... }:
 {
   time.timeZone = "America/Argentina/Buenos_Aires";
-  i18n.defaultLocale = "en_US.UTF-8";
   console.keyMap = "la-latin1";
+  i18n.defaultLocale = "en_US.UTF-8";
+
+  i18n.inputMethod = {
+    type = "fcitx5";
+    enable = true;
+    fcitx5.addons = with pkgs; [
+      fcitx5-mozc
+      fcitx5-gtk
+    ];
+  };
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   nix.gc = {
@@ -17,7 +26,10 @@
     alsa.support32Bit = true;
     pulse.enable = true;
   };
+  
+  environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
+  programs.steam.enable = true;
   programs.hyprland.enable = true;
   services.greetd = {
     enable = true;

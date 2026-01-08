@@ -38,25 +38,25 @@
         "format": "{}",
         "max-length": 10,
         "tooltip": true,
-        "on-click": "playerctl -p spotify,%any play-pause"
+        "on-click": "playerctl -p io.bassi.Amberol,spotify,%any play-pause"
     },
 
     "custom/play-pause": {
         "exec": "wb-player-status",
         "format": "{}",
-        "on-click": "playerctl -p spotify,%any play-pause",
+        "on-click": "playerctl -p io.bassi.Amberol,spotify,%any play-pause",
         "tooltip": false
     },
     "custom/prev": {
         "format": "󰒮",
-        "on-click": "playerctl -p spotify,%any previous",
+        "on-click": "playerctl -p io.bassi.Amberol,spotify,%any previous",
         "tooltip": false
     },
     "custom/next": {
         "format": "󰒭",
-        "on-click": "playerctl -p spotify,%any next",
+        "on-click": "playerctl -p io.bassi.Amberol,spotify,%any next",
         "tooltip": false
-},
+    },
 
     /* --- TASKBAR --- */
     "wlr/taskbar": {
@@ -76,7 +76,7 @@
 
     /* --- NETWORK TRAFFIC --- */
     "network#traffic": {
-        "interval": 2,
+        "interval": 1,
         "format": " {bandwidthDownBits}    {bandwidthUpBits}",
         "tooltip": false,
         "on-click": "kitty nload"
@@ -183,7 +183,9 @@
 
     "custom/todo": {
         "format": "",
-        "tooltip": false
+        "tooltip": false,
+        "on-click": "xed --new-window ~/todo.txt",
+        "on-click-right": "xed --new-window ~/todo-secondary.txt"
     },
 
     /* --- WORKSPACES --- */
